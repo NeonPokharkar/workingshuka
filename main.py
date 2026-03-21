@@ -39,3 +39,7 @@ def chunked_response(query):
 @app.get("/query")
 async def query(chat: str):
     return StreamingResponse(chunked_response(chat), media_type="text/plain")
+
+@app.get("/status")
+async def is_active():
+    return {"status": True}
