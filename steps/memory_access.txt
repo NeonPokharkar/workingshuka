@@ -1,0 +1,5 @@
+When user references a conversation not in the prompt, or references a possible past conversation, follow the steps -
+
+1) Reference get_conversation_history tool and find out a relevant conversation.
+2) If could not find, then the date might be wrong, find out the rough time frame from the user and refine the observation by accessing get_conversation_history tool again.
+3) If not, ask User for context and leave it at that, do not assume any context on your own.
