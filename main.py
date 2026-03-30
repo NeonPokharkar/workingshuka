@@ -41,7 +41,7 @@ async def intelli_chat(intelli_chat: IntelliChat):
     )
 
     # Step 2: Write a prompt that includes the user's question, the summary of relevant context, and the agent's current thought chain
-    prompt = f"User's Question: {intelli_chat.query}\nSummary of Relevant Context: {intelli_chat.conversation_summary}\nWhat User Might Be Thinking: {user_thoughts}\n\nBased on this information, generate a relevant answer to the user's question. You can look up more past conversations with tools as required. First try finding proper Instruction Set from the RAG index. If you find relevant instruction, use it to answer the question. If not, use your general knowledge to answer the question."
+    prompt = f"User's Question: {intelli_chat.query}\nSummary of Relevant Context: {intelli_chat.conversation_summary}\nLast Relevant Conversation: {intelli_chat.last_relevant_conversation}\nWhat User Might Be Thinking: {user_thoughts}\n\nBased on this information, generate a relevant answer to the user's question. You can look up more past conversations with tools as required. First try finding proper Instruction Set from the RAG index. If you find relevant instruction, use it to answer the question. If not, use your general knowledge to answer the question."
     
     return StreamingResponse(agent_setup.chunked_response(prompt, user_thoughts), media_type="text/plain")
 
