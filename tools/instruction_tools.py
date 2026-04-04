@@ -5,8 +5,8 @@ from langchain.tools import ToolException, tool
 
 import static.constants as constants
 
-Settings.llm = Ollama(model=constants.BASE_MODEL, request_timeout=100, thinking='medium')
-Settings.embed_model = OllamaEmbedding(model_name=constants.EMBEDDING_MODEL, request_timeout=1000)
+Settings.llm = Ollama(model=constants.BASE_MODEL, request_timeout=100, thinking='medium', additional_kwargs={"num_gpu": 99})
+Settings.embed_model = OllamaEmbedding(model_name=constants.EMBEDDING_MODEL, request_timeout=1000, additional_kwargs={"num_gpu": 1})
 
 documents = SimpleDirectoryReader(constants.INSTRUCTION_RAG_PATH, filename_as_id=True).load_data()
 index = VectorStoreIndex.from_documents(documents)

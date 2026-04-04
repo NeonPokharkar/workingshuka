@@ -17,11 +17,11 @@ import tools.instruction_tools as instruction_tools
 tools : list[BaseTool] = [*tools.personalization_tools.tools_list, *tools.map_tools.tool_list, *conversation_tools.tools_list, *instruction_tools.tools_list]
 
 for tool in tools:
-    tool.handle_tool_error = True  # Ensure that any exceptions raised within the tools are properly handled and propagated to the agent
+    tool.handle_tool_error = True
 
-llm = ChatOllama(model=constants.BASE_MODEL, request_timeout=1000, temperature=0, streaming=True)
+llm = ChatOllama(model=constants.BASE_MODEL, request_timeout=1000, num_gpu=1, temperature=0, streaming=True)
 # prompt = PromptTemplate.from_template(constants.AGENT_REACT_TEMPLATE)
-prompt = hub.pull("hwchase17/react")
+prompt = hub.pull(constants.AGENT_PROPMT_PULL)
 
 # The agent can now choose between looking up facts or calculating routes
 agent = create_react_agent(llm, tools, prompt)

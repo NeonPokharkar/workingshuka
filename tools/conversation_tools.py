@@ -8,7 +8,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 import static.constants as constants
 
-embeddings = HuggingFaceEmbeddings(model_name=constants.VECTOR_EMBEDDING_MODEL)
+embeddings = HuggingFaceEmbeddings(model_name=constants.VECTOR_EMBEDDING_MODEL, model_kwargs={'device': 'cuda'})
 
 vector_db = Chroma(
     persist_directory=constants.CONVERSATION_DIRECTORY, 
@@ -16,7 +16,7 @@ vector_db = Chroma(
     collection_name=constants.CONVERSATION_COLLECTION_NAME
 )
 
-llm = OllamaLLM(model=constants.BASE_MODEL, request_timeout=1000) 
+llm = OllamaLLM(model=constants.BASE_MODEL, request_timeout=1000, num_gpu=99) 
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "You are Shuka, an expert assistant with access to a local database of past conversations. You can use this information to provide personalized answers. Always cite your 'Source' from the metadata in the final answer."),

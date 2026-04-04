@@ -9,8 +9,8 @@ import static.constants as constants
 
 ## Personal Information Setup
 
-Settings.llm = Ollama(model=constants.BASE_MODEL, request_timeout=1000, streaming=True, thinking='low')
-Settings.embed_model = OllamaEmbedding(model_name=constants.EMBEDDING_MODEL, request_timeout=1000, streaming=True)
+Settings.llm = Ollama(model=constants.BASE_MODEL, request_timeout=1000, streaming=True, thinking='low', additional_kwargs={"num_gpu": 99})
+Settings.embed_model = OllamaEmbedding(model_name=constants.EMBEDDING_MODEL, request_timeout=1000, streaming=True, additional_kwargs={"num_gpu": 1})
 
 documents = SimpleDirectoryReader(constants.RAG_PATH, filename_as_id=True).load_data()
 index = VectorStoreIndex.from_documents(documents)

@@ -6,8 +6,9 @@ VECTOR_COLLECTION_NAME = "information_database"
 CONVERSATION_DIRECTORY = "./conversations"
 CONVERSATION_COLLECTION_NAME = "conversation_database"
 VECTOR_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-BASE_MODEL = "qwen3:30b"
+BASE_MODEL = "gemma3:12b"
 EMBEDDING_MODEL = "qwen3-embedding:8b"
+AGENT_PROPMT_PULL = "hwchase17/react"
 AGENT_REACT_TEMPLATE = """
 Your name is Shuka. You are an expert Assistant. You have access to a local database of 
 History, Science, and Mathematics. You have access to other tools as well. You have access to user's personal information and preferences. You can use this information to provide personalized answers.
