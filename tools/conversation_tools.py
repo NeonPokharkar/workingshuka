@@ -1,22 +1,20 @@
 from langchain.tools import ToolException, tool
 from langchain_chroma import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from langchain_ollama import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 import static.constants as constants
-
-embeddings = HuggingFaceEmbeddings(model_name=constants.VECTOR_EMBEDDING_MODEL, model_kwargs={'device': 'cuda'})
+import tools.rag_tools as rag_tools
 
 vector_db = Chroma(
     persist_directory=constants.CONVERSATION_DIRECTORY, 
-    embedding_function=embeddings,
+    embedding_function=rag_tools.embeddings,
     collection_name=constants.CONVERSATION_COLLECTION_NAME
 )
 
-llm = OllamaLLM(model=constants.BASE_MODEL, request_timeout=1000, num_gpu=99) 
+llm = OllamaLLM(model=constants.SECONDARY_MODEL, request_timeout=1000, num_gpu=99) 
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", "You are Shuka, an expert assistant with access to a local database of past conversations. You can use this information to provide personalized answers. Always cite your 'Source' from the metadata in the final answer."),
@@ -47,18 +45,3 @@ def save_conversation(question: str, answer: str, context: str, dateandtime: str
     )
     vector_db.add_documents([doc])
     return "Conversation saved successfully."
-
-@tool
-def get_conversation_history(query: str, date_range: dict) -> str:
-    """Retrieves past conversations relevant to the user's query within a specified date range. Useful when you have to remember past interactions. The date_range should be in the format 'YYYY-MM-DD to YYYY-MM-DD'."""
-    try:
-        # For simplicity, we'll just return the most relevant conversation from the vector store
-        data = vector_db.similarity_search(query, k=1, filter=date_range) # Get the most relevant conversation
-        if data:
-            return " ".join(" Metadata: " + str(doc.metadata) + " Content: " + doc.page_content for doc in data)
-        else:
-            raise ToolException("No relevant conversation history found for the given query and date range.")
-    except Exception as e:
-        raise ToolException(f"Error retrieving conversation history: {str(e)}")
-
-tools_list = [get_conversation_history]

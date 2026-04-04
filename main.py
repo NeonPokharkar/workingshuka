@@ -26,6 +26,8 @@ class VoiceResponse(BaseModel):
 
 app = FastAPI()
 
+os.environ['ORT_LOGGING_LEVEL'] = '3'
+
 # starttime = time()
 
 # response = query_engine.query("Who are you? What is your purpose?")
@@ -35,9 +37,9 @@ app = FastAPI()
 
 # print(f"Time taken: {endtime - starttime} seconds")
 
-@app.get("/query")
-async def query(chat: str):
-    return StreamingResponse(agent_setup.chunked_response(chat), media_type="text/plain")
+# @app.get("/query")
+# async def query(chat: str):
+#     return StreamingResponse(agent_setup.chunked_response(chat), media_type="text/plain")
 
 @app.post("/intelli-chat")
 async def intelli_chat(intelli_chat: IntelliChat):

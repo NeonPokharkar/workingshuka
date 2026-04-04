@@ -1,10 +1,10 @@
 from datasets import load_dataset
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
 import static.constants as constants
+import tools.rag_tools as rag_tools
 
 def download_dataset(page_content_function: callable, called_as: str, purpose_description: str, subject_expertise: str,dataset_path: str, dataset_split: str, dataset_name: str = None):
     # 1. DOWNLOAD: Get a high-quality educational subset (e.g., 'auto_math_text')
@@ -22,14 +22,11 @@ def download_dataset(page_content_function: callable, called_as: str, purpose_de
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     chunks = text_splitter.split_documents(docs)
 
-    # 4. EMBED: Convert text into math vectors (using a standard open-source model)
-    embeddings = HuggingFaceEmbeddings(model_name=constants.VECTOR_EMBEDDING_MODEL)
-
     # 5. INPUT TO RAG: Save chunks into a local vector database
     print(f"Adding {len(chunks)} chunks to vector store...")
     Chroma.from_documents(
         documents=chunks, 
-        embedding=embeddings, 
+        embedding=rag_tools.embeddings, 
         persist_directory=constants.VECTOR_DIRECTORY,
         collection_name=constants.VECTOR_COLLECTION_NAME
     )

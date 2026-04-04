@@ -1,10 +1,6 @@
 from faster_whisper import WhisperModel
-import faster_whisper
-from matplotlib import text
-from matplotlib.pylab import rint
 import torch
-from kokoro_onnx import Kokoro
-import soundfile as sf
+# from kokoro_onnx import Kokoro
 # from TTS.api import TTS
 import os, shutil
 from fastapi import UploadFile, File
@@ -50,9 +46,9 @@ from pydub import AudioSegment
 # Male:   pm_alex, pm_santa
 
 
-os.environ["ONNX_PROVIDER"] = "CUDAExecutionProvider"
+# os.environ["ONNX_PROVIDER"] = "CUDAExecutionProvider"
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True).to(device)
 
@@ -71,25 +67,25 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 #     return f"audio/output_clone_{file_id}.mp3"
 
-kokoro = Kokoro("kokoro/kokoro-v1.0.onnx", "kokoro/voices-v1.0.bin")
+# kokoro = Kokoro("kokoro/kokoro-v1.0.onnx", "kokoro/voices-v1.0.bin")
 
-def speakInShukaVoice(text, voice_type):
-    id = uuid.uuid4()
-    samples, sample_rate = kokoro.create(text, voice=voice_type, speed=1.0)
+# def speakInShukaVoice(text, voice_type):
+#     id = uuid.uuid4()
+#     samples, sample_rate = kokoro.create(text, voice=voice_type, speed=1.0)
 
-    audio_data = (samples * 32767).astype(np.int16)
+#     audio_data = (samples * 32767).astype(np.int16)
 
-    audio_segment = AudioSegment(
-        audio_data.tobytes(), 
-        frame_rate=sample_rate,
-        sample_width=audio_data.dtype.itemsize, 
-        channels=1
-    )
+#     audio_segment = AudioSegment(
+#         audio_data.tobytes(), 
+#         frame_rate=sample_rate,
+#         sample_width=audio_data.dtype.itemsize, 
+#         channels=1
+#     )
 
-    audio_segment.export(f"audio/output_{id}.mp3", format="mp3", bitrate="192k")
-    print(f"Saved as audio/output_{id}.mp3")
+#     audio_segment.export(f"audio/output_{id}.mp3", format="mp3", bitrate="192k")
+#     print(f"Saved as audio/output_{id}.mp3")
 
-    return f"audio/output_{id}.mp3"
+#     return f"audio/output_{id}.mp3"
 
 # faster_whisper.download_model("large-v3-turbo", output_dir="./whisper")
 

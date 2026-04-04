@@ -10,16 +10,16 @@ import tools.map_tools
 import tools.personalization_tools
 import static.constants as constants
 import tools.conversation_tools as conversation_tools
-import tools.instruction_tools as instruction_tools
+import tools.rag_tools as rag_tools
 
 # Wrapping the tools with LangChain's @tool decorator for better integration
 
-tools : list[BaseTool] = [*tools.personalization_tools.tools_list, *tools.map_tools.tool_list, *conversation_tools.tools_list, *instruction_tools.tools_list]
+tools : list[BaseTool] = [*tools.personalization_tools.tools_list, *tools.map_tools.tool_list, *rag_tools.tools]
 
 for tool in tools:
     tool.handle_tool_error = True
 
-llm = ChatOllama(model=constants.BASE_MODEL, request_timeout=1000, num_gpu=1, temperature=0, streaming=True)
+llm = ChatOllama(model=constants.PRIMARY_MODEL, request_timeout=1000, num_gpu=1, temperature=0, streaming=True)
 # prompt = PromptTemplate.from_template(constants.AGENT_REACT_TEMPLATE)
 prompt = hub.pull(constants.AGENT_PROPMT_PULL)
 
