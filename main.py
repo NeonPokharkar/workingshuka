@@ -7,11 +7,9 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 import uuid
 
-
 import setup.agent_setup as agent_setup
 import setup.api_setup as api_setup
 import setup.speech_to_text as speech_to_text
-import tools.conversation_tools as conversation_tools
 
 class Chat(BaseModel):
     query: str
@@ -43,21 +41,15 @@ os.environ['ORT_LOGGING_LEVEL'] = '3'
 
 @app.post("/intelli-chat")
 async def intelli_chat(intelli_chat: IntelliChat):
-    # Step 1: Determine what the user is currently thinking or asking about
-    user_thoughts = conversation_tools.what_is_user_thinking(
-        current_summary=intelli_chat.conversation_summary,
-        last_relevant_conversation=intelli_chat.last_relevant_conversation,
-        what_user_has_asked_now=intelli_chat.query
-    )
+    print(f"Received query: {intelli_chat}")
 
-    # Step 2: Write a prompt that includes the user's question, the summary of relevant context, and the agent's current thought chain
-    prompt = f"User's Question: {intelli_chat.query}\nSummary of Relevant Context: {intelli_chat.conversation_summary}\nLast Relevant Conversation: {intelli_chat.last_relevant_conversation}\nWhat User Might Be Thinking: {user_thoughts}\n\nBased on this information, generate a relevant answer to the user's question. You can look up more past conversations with tools as required. First try finding proper Instruction Set from the RAG index. If you find relevant instruction, use it to answer the question. If not, use your general knowledge to answer the question."
+    user_thoughts = agent_setup.ask_llm_for_summary_of_thoughts(intelli_chat.query, intelli_chat.conversation_summary, intelli_chat.last_relevant_conversation)
     
-    return StreamingResponse(agent_setup.chunked_response(prompt, user_thoughts), media_type="text/plain")
+    return StreamingResponse(agent_setup.chunked_response({"input": intelli_chat.query, "summary_of_context": user_thoughts, "last_relevant_conversation": intelli_chat.last_relevant_conversation, "user_thoughts": user_thoughts}, intelli_chat.conversation_summary), media_type="text/plain")
 
 @app.post("/speech-to-text")
 async def speech_to_text_endpoint(file: UploadFile = File(...)):
-    return VoiceResponse(text=speech_to_text.transcribe_mp3(file))
+    return VoiceResponse(text=speech_to_text.transcribe_wav(file))
 
 @app.post("/text-to-speech")
 async def text_to_speech_endpoint(voice_response: VoiceResponse):
